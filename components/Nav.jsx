@@ -7,15 +7,14 @@ import { useState, useEffect } from "react";
 import { signIn, signOut, useSession, getProviders } from "next-auth/react";
 
 function Nav() {
-    const isUserLoggedIn = true;
-    const [providers, setProvider] = useState(null);
+    const { data: session } = useSession();
+    const [providers, setProviders] = useState(null);
 
     useEffect(() => {
-        const setProviders = async () => {
-            const responce = await getProviders();
-            setProvider(responce);
-        };
-        setProviders();
+        (async () => {
+            const res = await getProviders();
+            setProviders(res);
+        })();
     }, []);
 
     const [toggleDropdown, setToggleDropdown] = useState(false);
@@ -35,7 +34,7 @@ function Nav() {
 
             {/* desktop navigation */}
             <div className="sm:flex hidden">
-                {isUserLoggedIn ? (
+                {session?.user ? (
                     <div className="flex gap-3 md:gap-5">
                         <Link href="/create-prompt" className="black_btn">
                             Create Post
@@ -46,12 +45,12 @@ function Nav() {
                             onClick={signOut}
                             className="outline_btn"
                         >
-                            sign Out
+                            Sign Out
                         </button>
 
                         <Link href="/profile">
                             <Image
-                                src="/assets/images/logo.svg"
+                                src={session?.user.image}
                                 width={37}
                                 height={37}
                                 className="rounded-full"
@@ -62,14 +61,16 @@ function Nav() {
                 ) : (
                     <>
                         {providers &&
-                            Object.values(providers).map((providers) => (
+                            Object.values(providers).map((provider) => (
                                 <button
                                     type="button"
-                                    key={providers.name}
-                                    onClick={() => signIn(provider.id)}
+                                    key={provider.name}
+                                    onClick={() => {
+                                        signIn(provider.id);
+                                    }}
                                     className="black_btn"
                                 >
-                                    Sign In
+                                    Sign in
                                 </button>
                             ))}
                     </>
@@ -78,15 +79,15 @@ function Nav() {
 
             {/* mobile navigation  */}
             <div className="sm:hidden flex relative">
-                {isUserLoggedIn ? (
+                {session?.user ? (
                     <div className="flex">
                         <Image
-                            src="/assets/images/logo.svg"
+                            src={session?.user.image}
                             width={37}
                             height={37}
                             className="rounded-full"
                             alt="profile"
-                            onClick={() => setToggleDropdown((prev) => !prev)}
+                            onClick={() => setToggleDropdown(!toggleDropdown)}
                         />
 
                         {toggleDropdown && (
@@ -121,14 +122,16 @@ function Nav() {
                 ) : (
                     <>
                         {providers &&
-                            Object.values(providers).map((providers) => (
+                            Object.values(providers).map((provider) => (
                                 <button
                                     type="button"
-                                    key={providers.name}
-                                    onClick={() => signIn(provider.id)}
+                                    key={provider.name}
+                                    onClick={() => {
+                                        signIn(provider.id);
+                                    }}
                                     className="black_btn"
                                 >
-                                    Sign In
+                                    Sign in
                                 </button>
                             ))}
                     </>
