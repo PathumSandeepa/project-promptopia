@@ -5,10 +5,10 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 import Form from "@components/Form";
-import { set } from "mongoose";
-import { routeModule } from "next/dist/build/templates/app-page";
 
 const CreatePrompt = () => {
+    const { data: session } = useSession();
+    const router = useRouter();
     const [submitting, setSubmitting] = useState(false);
     const [post, setPost] = useState({
         prompt: "",
@@ -16,7 +16,7 @@ const CreatePrompt = () => {
     });
 
     const createPrompt = async (e) => {
-        e.priventDefault();
+        e.preventDefault(); // Fixed the typo here
         setSubmitting(true);
 
         try {
@@ -30,7 +30,7 @@ const CreatePrompt = () => {
             });
 
             if (response.ok) {
-                Router.push("/");
+                router.push("/"); // Fixed the incorrect Router reference
             }
         } catch (error) {
             console.log(error);
