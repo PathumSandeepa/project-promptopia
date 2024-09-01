@@ -16,7 +16,7 @@ const CreatePrompt = () => {
     });
 
     const createPrompt = async (e) => {
-        e.preventDefault(); // Fixed the typo here
+        e.preventDefault();
         setSubmitting(true);
 
         try {
@@ -30,7 +30,7 @@ const CreatePrompt = () => {
             });
 
             if (response.ok) {
-                router.push("/"); // Fixed the incorrect Router reference
+                router.push("/");
             }
         } catch (error) {
             console.log(error);
